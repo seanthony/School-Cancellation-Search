@@ -10,8 +10,10 @@ def get_weather():
     title = lookup.title
     output = '''Weather Forcast
     {}, {}
-    {}°F {}'''.format(lookup.location.city, lookup.location.region, lookup.condition.temp, lookup.condition.text)
-    print(output)
+    {}°F {}
+    Forecast: {} Hi: {}°F, Lo: {}°F 
+    '''.format(lookup.location.city, lookup.location.region, lookup.condition.temp, lookup.condition.text, lookup.forecast[0].text, lookup.forecast[0].high, lookup.forecast[0].low)
+    return output
 
 
 def get_page_text():
@@ -49,15 +51,20 @@ def get_bcca_schools(rows):
 
 
 def main():
-    get_weather()
-    print()
+    # weather info
+    weather = get_weather()
+    print(weather)
+
+    # cancellation info
     text = get_page_text()
     rows = scrape_page(text)
     bcca_rows = get_bcca_schools(rows)
-    print()
-    print('BCCA School:\n\t', '\n\t'.join(bcca_rows), sep="")
-    print()
-    print('All School Closings:\n\t', '\n\t'.join(rows), sep="")
+    if len(bcca_rows):
+        print('\nBCCA Schools:\n\t', '\n\t'.join(bcca_rows), sep="")
+    if len(rows):
+        print('\nAll School Closings:\n\t', '\n\t'.join(rows), sep="")
+    else:
+        print('No closings')
 
 
 if __name__ == "__main__":
