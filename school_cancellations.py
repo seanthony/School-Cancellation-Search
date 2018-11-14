@@ -7,8 +7,12 @@ def get_page_text():
     return r.text
 
 
+def strip_row(row):
+    return row.split('</tr>')[0].split('</td>')[0].split('>')[-1].strip()
+
+
 def scrape_page(text):
-    rows = list(map(lambda r: r.split('</tr>')[0], text.split('<tr>')))
+    rows = list(map(strip_row, text.split('<tr>')))
     print('school closings:\n\t', end="")
     print('\n\t'.join(rows))
 
