@@ -1,5 +1,6 @@
 import requests
 from weather import Weather, Unit
+from termcolor import colored, cprint
 
 
 def get_weather():
@@ -28,7 +29,10 @@ def strip_row(row):
         if len(tds) >= 3:
             school, dismiss = tds[1].split(
                 '>')[-1].strip(), tds[2].split('>')[-1].strip()
-            return '{} is \'{}\''.format(school, dismiss)
+            text = '{} is \'{}\''.format(school, dismiss)
+            if is_bcca_school(text):
+                return colored(text, 'yellow', attrs=['reverse'])
+            return text
     return row.split('</tr>')[0].split('</td>')[0].split('>')[-1].strip()
 
 
@@ -51,6 +55,7 @@ def get_bcca_schools(rows):
 
 
 def main():
+    print('\n\n')
     # weather info
     weather = get_weather()
     print(weather)
@@ -60,11 +65,14 @@ def main():
     rows = scrape_page(text)
     bcca_rows = get_bcca_schools(rows)
     if len(bcca_rows):
-        print('\nBCCA Schools:\n\t', '\n\t'.join(bcca_rows), sep="")
+        print()
+        text = colored('BCCA Schools:', 'red', attrs=['reverse'])
+        print(text, '\n\t', '\n\t'.join(bcca_rows), sep="")
     if len(rows):
         print('\nAll School Closings:\n\t', '\n\t'.join(rows), sep="")
     else:
         print('No closings')
+    print('\n\n')
 
 
 if __name__ == "__main__":
