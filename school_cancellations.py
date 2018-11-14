@@ -3,7 +3,7 @@ from weather import Weather, Unit
 from termcolor import colored, cprint
 
 
-def get_weather():
+def get_water_valley_weather():
     weather = Weather(unit=Unit.FAHRENHEIT)
     # 2515032 is WOEID for Water Valley, MS
     lookup = weather.lookup(2515032)
@@ -17,8 +17,21 @@ def get_weather():
     return output
 
 
+def get_surrounding_weather():
+    woieds = [2370661, 2359957, 2378315, 2382555, 2467174, 2475064]
+    forecasts = []
+    for woied in woieds:
+        weather = Weather(unit=Unit.FAHRENHEIT)
+        lookup = weather.lookup(woied)
+        text = '{} {}°F {}'.format(
+            lookup.location.city, lookup.condition.temp, lookup.condition.text)
+        forecasts.append(text)
+    return ', '. join(forecasts)
+
+
 def get_page_text():
     # r = requests.get('https://www.wtva.com/weather/closings/')
+    # changed url to focus only on the iframe text from above link
     r = requests.get('https://ftp2.wtva.com/All_Active.html')
     return r.text
 
@@ -57,8 +70,10 @@ def get_bcca_schools(rows):
 def main():
     print('\n\n')
     # weather info
-    weather = get_weather()
+    weather = get_water_valley_weather()
     print(weather)
+    surrounding = get_surrounding_weather()
+    print(surrounding)
 
     # cancellation info
     text = get_page_text()
